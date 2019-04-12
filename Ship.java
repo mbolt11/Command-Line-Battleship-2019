@@ -9,7 +9,7 @@ public class Ship
    private int column;
    private int life;
    
-   public Ship(int len, int dir, int row_in, int column_in)
+   public Ship(int len, char dir, int row_in, int column_in)
    {
       length = len;
       life = len;

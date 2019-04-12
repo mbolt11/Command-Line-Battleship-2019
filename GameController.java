@@ -1,19 +1,22 @@
 //Battleship game control
 
+import java.util.*;
+
 public class GameController
 {
-   //Arrays to represent boards
-   private String [][] player1board, player1opponent, player2board, player2opponent;
-   private int currentPlayer;
+   //Players- 1, 2, and a reference to current
+   private Player player1, player2;
+   private Player currentPlayer;
+   private Scanner scan;
    
    //Constructor
    public GameController()
    {
-      player1board = new String[11][11];
-      player1opponent = new String[11][11];
-      player2board = new String[11][11];
-      player2opponent = new String[11][11];
-      currentPlayer = 1;
+      scan = new Scanner(System.in);
+      
+      player1 = new Player();
+      player2 = new Player();
+      currentPlayer = player1;
       
       //Fill boards initially with all dashes except for labels
       for(int i = 0; i < 11; i++)
@@ -24,18 +27,18 @@ public class GameController
             if(i == 0)
             {
                if(j == 0)
-               {
-                  player1board[i][j] = " ";
-                  player1opponent[i][j] = " ";
-                  player2board[i][j] = " ";
-                  player2opponent[i][j] = " ";
+               {  
+                  player1.getMyBoard()[i][j] = " ";
+                  player1.getOppBoard()[i][j] = " ";
+                  player2.getMyBoard()[i][j] = " ";
+                  player2.getOppBoard()[i][j] = " ";
                }
                else
-               {
-                  player1board[i][j] = Integer.toString(j);
-                  player1opponent[i][j] = Integer.toString(j);
-                  player2board[i][j] = Integer.toString(j);
-                  player2opponent[i][j] = Integer.toString(j);
+               {  
+                  player1.getMyBoard()[i][j] = Integer.toString(j);
+                  player1.getOppBoard()[i][j] = Integer.toString(j);
+                  player2.getMyBoard()[i][j] = Integer.toString(j);
+                  player2.getOppBoard()[i][j] = Integer.toString(j);
                }
             }
             //Row labels (letters)
@@ -44,86 +47,126 @@ public class GameController
                if(i != 0)
                {
                   char letter = 'A';
-                  player1board[i][j] = Character.toString((char)(letter + (i-1)));
-                  player1opponent[i][j] = Character.toString((char)(letter + (i-1)));
-                  player2board[i][j] = Character.toString((char)(letter + (i-1)));
-                  player2opponent[i][j] = Character.toString((char)(letter + (i-1)));
+                  
+                  player1.getMyBoard()[i][j] = Character.toString((char)(letter + (i-1)));
+                  player1.getOppBoard()[i][j] = Character.toString((char)(letter + (i-1)));
+                  player2.getMyBoard()[i][j] = Character.toString((char)(letter + (i-1)));
+                  player2.getOppBoard()[i][j] = Character.toString((char)(letter + (i-1)));
                }
             }
             //The dashes in all other spots
             else
-            {
-               player1board[i][j] = "-";
-               player1opponent[i][j] = "-";
-               player2board[i][j] = "-";
-               player2opponent[i][j] = "-";
+            {  
+               player1.getMyBoard()[i][j] = "-";
+               player1.getOppBoard()[i][j] = "-";
+               player2.getMyBoard()[i][j] = "-";
+               player2.getOppBoard()[i][j] = "-";
             }
          }
       }
    }
    
-   //Function that prints the boards on each turn
-   public void printBoards()
+   //Function to place ships on board at beginning of game
+   public void placeShips(int playernum)
    {
-      //Player 1's turn
-      if(currentPlayer == 1)
+      //Set the current player based on the int passed in
+      if(playernum == 1)
       {
-         System.out.println("      Your Board                Opponent Board");
-         //i is the rows
-         for(int i = 0; i < 11; i++)
-         {
-            String row = "";
-            
-            //Loop through player's board columns
-            for(int j = 0; j < 11; j++)
-            {
-               row += player1board[i][j] + " ";
-            }
-            
-            //Add spaces which separate the two boards
-            if(i == 0)
-               row += "     ";
-            else
-               row += "      ";  
-                         
-            //Loop through opponent's board columns
-            for(int k = 0; k < 11; k++)
-            {
-               row += player1opponent[i][k] + " ";
-            }
-            
-            System.out.println(row);
-         }
+         currentPlayer = player1;
       }
-      //Player 2's turn
       else
       {
-         System.out.println("      Your Board                Opponent Board");
-         //i is the rows
-         for(int i = 0; i < 11; i++)
+         currentPlayer = player2;
+      }
+      
+      //Intro message
+      System.out.println("Hello Player " + playernum + "! Let's place your ships.");
+      String[] shipnames = new String[] {"2-unit","first 3-unit","second 3-unit","4-unit","5-unit"};
+      int[] shiplengths = new int[] {2,3,3,4,5};
+      
+      //Loop through placing all 5 ships
+      for(int i = 0; i < 5; i++)
+      {
+         boolean success = false;
+         while(!success)
          {
-            String row = "";
-            
-            //Loop through player's board columns
-            for(int j = 0; j < 11; j++)
+            //Get column
+            System.out.println("In which column (1-10) would you like your " + shipnames[i] + " ship?");
+            int col = scan.nextInt();
+          
+            while(col < 1 || col > 10)
             {
-               row += player2board[i][j] + " ";
+               System.out.print("Invalid column, try again: ");
+               col = scan.nextInt();
             }
             
-            //Add spaces which separate the two boards
-            if(i == 0)
-               row += "     ";
-            else
-               row += "      ";
+            //Get row
+            System.out.println("In which row (A-J) would you like your " + shipnames[i] + " ship?");
+            char rowletter = scan.next().charAt(0);
+            rowletter = Character.toUpperCase(rowletter);
+            int row = rowletter - 64;
             
-            //Loop through opponent's board columns
-            for(int k = 0; k < 11; k++)
+            while(row < 1 || row > 10)
             {
-               row += player2opponent[i][k] + " ";
+               System.out.print("Invalid row, try again: ");
+               rowletter = scan.next().charAt(0);
+               rowletter = Character.toUpperCase(rowletter);
+               row = rowletter - 64;
             }
             
-            System.out.println(row);
+            //Get direction
+            System.out.println("Horizontal (H) or vertical (V)?");
+            char dir = scan.next().charAt(0);
+            dir = Character.toUpperCase(dir);
+            
+            //Attempt to place the ship
+            success = currentPlayer.placeShip(shiplengths[i],dir,row,col);
          }
+         //Print the board
+         printBoards(playernum);
+      }
+      
+      System.out.println("Placements complete!");  
+   }
+   
+   //Function that prints the boards on each turn
+   public void printBoards(int playernum)
+   {
+      //Set the current player based on the int passed in
+      if(playernum == 1)
+      {
+         currentPlayer = player1;
+      }
+      else
+      {
+         currentPlayer = player2;
+      }
+     
+      //Print the boards
+      System.out.println("      Your Board                Opponent Board");
+      for(int i = 0; i < 11; i++) //i is the rows
+      {
+         String row = "";
+         
+         //Loop through player's board columns
+         for(int j = 0; j < 11; j++)
+         {
+            row += currentPlayer.getMyBoard()[i][j] + " ";
+         }
+         
+         //Add spaces which separate the two boards
+         if(i == 0)
+            row += "     ";
+         else
+            row += "      ";  
+                      
+         //Loop through opponent's board columns
+         for(int k = 0; k < 11; k++)
+         {
+            row += currentPlayer.getOppBoard()[i][k] + " ";
+         }
+         
+         System.out.println(row);
       }
    }
 }

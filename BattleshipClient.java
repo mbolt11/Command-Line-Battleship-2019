@@ -6,6 +6,9 @@ public class BattleshipClient
    {
       GameController game = new GameController();
       
-      game.printBoards();
+      game.printBoards(1);
+      game.printBoards(2);
+      
+      game.placeShips(1);
    }
 }
