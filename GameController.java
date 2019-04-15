@@ -221,6 +221,10 @@ public class GameController
       currentPlayer.opponentBoardFiredAt(col, row, opponent);
       opponent.playerBoardFiredAt(col, row);
       
+      //check for any ships are sunk on the opponent board
+      currentPlayer.opponentBoardUpdateSunk(opponent);
+      //opponent.playerBoardUpdateSunk(); --> made this on accident, not necessary
+      
       //switch current Player for the next turn
       if(currentPlayer.getNum() == 1)
       {
@@ -253,17 +257,19 @@ public class GameController
       //loop through all the ships of each player
       for(int i = 0; i < 5; i++)
       {
-         playerShipsSunk = currentPlayer.getShips().get(i).isSunk();
-         opponentShipsSunk = opponent.getShips().get(i).isSunk();
+         if(!currentPlayer.getShips().get(i).isSunk())
+            playerShipsSunk = false;
+         if(!opponent.getShips().get(i).isSunk())
+            opponentShipsSunk = false;
       }  
       
       if(playerShipsSunk)
       {
+         currentPlayer = opponent;
          return true;
       }
       else if(opponentShipsSunk)
       {
-         currentPlayer = opponent;
          return true;
       }
       

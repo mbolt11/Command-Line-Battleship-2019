@@ -19,6 +19,7 @@ public class BattleshipClient
          game.printBoards(true);
          game.play();
          game.printBoards(false);
+         System.out.println("\n\n\n\n\n");
       }
    
       System.out.println("Congratulations "+game.getCurrentPlayer().name()+"! You win.");

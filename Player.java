@@ -59,7 +59,7 @@ public class Player
       int row = (row_in - 'A') + 1;
       char fireResult = '*';
       
-      if(opponent.shipHit(col, row_in))
+      if(opponent.shipHit(col, row))
          fireResult = 'H';
          
       opponentBoard[row][col] = Character.toString(fireResult); 
@@ -71,6 +71,44 @@ public class Player
       char fireResult = 'X';
       
       myBoard[row][col] = Character.toString(fireResult); 
+   }
+   
+   public void opponentBoardUpdateSunk(Player opponent)
+   {
+      for(int i = 0; i < opponent.getShips().size(); i++)
+      {
+         if(opponent.getShips().get(i).isSunk())
+         {
+            //check if first location of ship has an 'S' on the board
+            if(opponentBoard[opponent.getShips().get(i).getRow()][opponent.getShips().get(i).getCol()] != Character.toString('S'))
+            {
+               //loop through all the ship's locations and set them on the board to 'S'
+               for(int j = 0; j < opponent.getShips().get(i).getLocations().length; j++)
+               {
+                  opponentBoard[(opponent.getShips().get(i).getLocations())[j][0]][(opponent.getShips().get(i).getLocations())[j][1]] = Character.toString('S');
+               }
+            }
+         }
+      }
+   }
+   
+   public void playerBoardUpdateSunk()
+   {
+      for(int i = 0; i < myShips.size(); i++)
+      {
+         if(myShips.get(i).isSunk())
+         {
+            //check if first location of ship has an 'S' on the board
+            if(myBoard[myShips.get(i).getRow()][myShips.get(i).getCol()] != Character.toString('S'))
+            {
+               //loop through all the ship's locations and set them on the board to 'S'
+               for(int j = 0; j < myShips.get(i).getLocations().length; j++)
+               {
+                  myBoard[(myShips.get(i).getLocations())[j][0]][(myShips.get(i).getLocations())[j][1]] = Character.toString('S');
+               }
+            }
+         } 
+      }
    }
    
    public boolean shipHit(int col, int row)

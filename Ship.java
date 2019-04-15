@@ -50,14 +50,34 @@ public class Ship
       }
    }
    
+   public int [][] getLocations()
+   {
+      return shipLocations;
+   }
+   
+   public int getRow()
+   {
+      return row;
+   }
+   
+   public int getCol()
+   {
+      return column;
+   }
+   
    public boolean isHit(int col, int row)
    {
       for(int i = 0; i < length; i++)
       {
          if(shipLocations[i][0] == row && shipLocations[i][1] == col)
          {
+            System.out.println("Ship ID: "+length+" hit");
             hit();
             return true;
+         }
+         else
+         {
+            /*System.out.println("Ship ID: "+length+" at "+shipLocations[i][0]+" "+shipLocations[i][1]+" does not equal "+row+" "+column);*/
          }
       }
       
@@ -68,7 +88,10 @@ public class Ship
    {
       life--;
       if(life == 0)
+      {
          sunk = true;
+         System.out.println("Ship ID: "+length+" sunk");
+      }
    }
    
    public boolean isSunk()
