@@ -6,12 +6,24 @@ public class Player
 {
    private String [][] myBoard, opponentBoard;
    private ArrayList<Ship> myShips;
+   private int playerNumber;
    
-   public Player()
+   public Player(int playerNum_in)
    {
       myBoard = new String[11][11];
       opponentBoard = new String[11][11];
       myShips = new ArrayList<Ship>();
+      playerNumber = playerNum_in;
+   }
+   
+   public int getNum()
+   {
+      return playerNumber;
+   }
+   
+   public String name()
+   {
+      return "Player "+playerNumber;
    }
    
    public String[][] getMyBoard()
@@ -22,6 +34,57 @@ public class Player
    public String[][] getOppBoard()
    {
       return opponentBoard;
+   }
+   
+   public ArrayList<Ship> getShips()
+   {
+      return myShips;
+   }
+   
+   public boolean isValidFire(int col, char row_in)
+   {
+      int row = (row_in - 'A') + 1;
+      
+      /*System.out.println("Checking location "+row+" "+col);
+      System.out.println("Opponent Board at location is "+opponentBoard[row][col]);
+      System.out.println("isValidFire method returns "+ opponentBoard[row][col].equals("-"));*/
+      if(opponentBoard[row][col].equals("-"))
+         return true;
+      else
+         return false;
+   }
+   
+   public void opponentBoardFiredAt(int col, char row_in, Player opponent)
+   {
+      int row = (row_in - 'A') + 1;
+      char fireResult = '*';
+      
+      if(opponent.shipHit(col, row_in))
+         fireResult = 'H';
+         
+      opponentBoard[row][col] = Character.toString(fireResult); 
+   }
+   
+   public void playerBoardFiredAt(int col, char row_in)
+   {
+      int row = (row_in - 'A') + 1;
+      char fireResult = 'X';
+      
+      myBoard[row][col] = Character.toString(fireResult); 
+   }
+   
+   public boolean shipHit(int col, int row)
+   {
+      boolean success = false;
+      
+      for(int i = 0; i < myShips.size(); i++)
+      {
+         success = myShips.get(i).isHit(col, row);
+         if(success)
+            return success;
+      }
+      
+      return success;
    }
    
    public boolean placeShip(int length, char direction, int row, int column)

@@ -14,8 +14,8 @@ public class GameController
    {
       scan = new Scanner(System.in);
       
-      player1 = new Player();
-      player2 = new Player();
+      player1 = new Player(1);
+      player2 = new Player(2);
       currentPlayer = player1;
       
       //Fill boards initially with all dashes except for labels
@@ -66,6 +66,11 @@ public class GameController
       }
    }
    
+   public Player getCurrentPlayer()
+   {
+      return currentPlayer;
+   }
+   
    //Function to place ships on board at beginning of game
    public void placeShips(int playernum)
    {
@@ -92,13 +97,19 @@ public class GameController
          {
             //Get column
             System.out.println("In which column (1-10) would you like your " + shipnames[i] + " ship?");
-            int col = scan.nextInt();
-          
-            while(col < 1 || col > 10)
-            {
-               System.out.print("Invalid column, try again: ");
-               col = scan.nextInt();
-            }
+            
+            int col = -1;
+            
+            do{
+               try{
+                  String colString = scan.next();
+                  col = Integer.parseInt(colString);
+                  }
+               catch(InputMismatchException ime)
+                  {
+                     System.out.println("Please enter an integer in the range 1-10.");
+                  }
+            }while(col < 1 || col > 10);
             
             //Get row
             System.out.println("In which row (A-J) would you like your " + shipnames[i] + " ship?");
@@ -116,32 +127,166 @@ public class GameController
             
             //Get direction
             System.out.println("Horizontal (H) or vertical (V)?");
-            char dir = scan.next().charAt(0);
-            dir = Character.toUpperCase(dir);
+            char dir = ' ';
+            while(dir != 'H' && dir !='V')
+            {
+               dir = scan.next().charAt(0);
+               dir = Character.toUpperCase(dir);
+               System.out.println("check: "+dir);
+               
+               if(dir != 'H' && dir !='V')
+                  System.out.println("Invlaid direction. Try again.");
+            }
             
             //Attempt to place the ship
             success = currentPlayer.placeShip(shiplengths[i],dir,row,col);
          }
          //Print the board
-         printBoards(playernum);
+         printBoards(true);
       }
       
-      System.out.println("Placements complete!");  
-   }
-   
-   //Function that prints the boards on each turn
-   public void printBoards(int playernum)
-   {
-      //Set the current player based on the int passed in
-      if(playernum == 1)
-      {
-         currentPlayer = player1;
-      }
-      else
+      //switch current Player for the next turn or placement
+      if(currentPlayer.getNum() == 1)
       {
          currentPlayer = player2;
       }
-     
+      else
+      {
+         currentPlayer = player1;
+      }  
+      
+      System.out.println("Placements complete!\n\n");  
+   }
+   
+   public void play()
+   {
+      //get a row and column from the user
+      boolean validFireLocation = false;
+      int col = -1;
+      char row = ' ';
+      
+      while(validFireLocation == false)
+      {
+         System.out.println(currentPlayer.name()+" in which column (1-10) of the opponent's board would you like to fire at?");
+         
+         do{
+            try{
+               String colString = scan.next();
+               col = Integer.parseInt(colString);
+               }
+            catch(InputMismatchException ime)
+               {
+                  System.out.println("Please enter an integer in the range 1-10.");
+               }
+         }while(col < 1 || col > 10);
+         
+         System.out.println(currentPlayer.name()+" in which row (A-J) of the opponent's board would you like to fire at?");
+         int rowInt = -1;
+         
+         do{
+            try{
+               row = scan.next().charAt(0); 
+               row = Character.toUpperCase(row);
+               rowInt = row - 64;
+               }
+            catch(InputMismatchException ime)
+               {
+               }
+               
+            if(rowInt < 1 || rowInt > 10)
+               System.out.println("Please enter an charcater in the range A-J.");
+         }while(rowInt < 1 || rowInt > 10);
+         
+         //check if the opponent's board at that location has not already been fired at
+         //must remember to move the row and column in and down by 1 so that the correct string value is looked at
+         validFireLocation = currentPlayer.isValidFire(col, row); 
+         
+         if(!validFireLocation)
+            System.out.println("You have already fired this location. Enter another location.");
+      }
+      
+      //specify which player object is the opponent
+      Player opponent;
+      
+      if(currentPlayer.getNum() == 1)
+      {
+         opponent = player2;
+      }
+      else
+      {
+         opponent = player1;
+      }  
+      
+      //update each player's boards according to the results of the fire
+      currentPlayer.opponentBoardFiredAt(col, row, opponent);
+      opponent.playerBoardFiredAt(col, row);
+      
+      //switch current Player for the next turn
+      if(currentPlayer.getNum() == 1)
+      {
+         currentPlayer = player2;
+      }
+      else
+      {
+         currentPlayer = player1;
+      }   
+   }
+   
+   
+   //if all the ships of one player have been Sunk, then one player wins the game
+   public boolean isWon()
+   {
+      Player opponent;
+      
+      if(currentPlayer.getNum() == 1)
+      {
+         opponent = player2;
+      }
+      else
+      {
+         opponent = player1;
+      }
+      
+      boolean playerShipsSunk = true;
+      boolean opponentShipsSunk = true;
+      
+      //loop through all the ships of each player
+      for(int i = 0; i < 5; i++)
+      {
+         playerShipsSunk = currentPlayer.getShips().get(i).isSunk();
+         opponentShipsSunk = opponent.getShips().get(i).isSunk();
+      }  
+      
+      if(playerShipsSunk)
+      {
+         return true;
+      }
+      else if(opponentShipsSunk)
+      {
+         currentPlayer = opponent;
+         return true;
+      }
+      
+      return false;
+   }
+   
+   //Function that prints the boards on each turn
+   public void printBoards(boolean printCurrentPlayerBoard)
+   {   
+      Player trackCurrentPlayer = currentPlayer;
+      
+      if(!printCurrentPlayerBoard)
+      {
+         if(currentPlayer.getNum() == 1)
+         {
+            currentPlayer = player2;
+         }
+         else
+         {
+            currentPlayer = player1;
+         } 
+      }
+        
       //Print the boards
       System.out.println("      Your Board                Opponent Board");
       for(int i = 0; i < 11; i++) //i is the rows
@@ -167,6 +312,11 @@ public class GameController
          }
          
          System.out.println(row);
+      }
+      
+      if(!printCurrentPlayerBoard)
+      {
+         currentPlayer = trackCurrentPlayer;
       }
    }
 }
