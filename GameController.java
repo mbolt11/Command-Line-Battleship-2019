@@ -105,7 +105,7 @@ public class GameController
                   String colString = scan.next();
                   col = Integer.parseInt(colString);
                   }
-               catch(InputMismatchException ime)
+               catch(Exception e)
                   {
                      System.out.println("Please enter an integer in the range 1-10.");
                   }
@@ -167,14 +167,37 @@ public class GameController
       
       while(validFireLocation == false)
       {
-         System.out.println(currentPlayer.name()+" in which column (1-10) of the opponent's board would you like to fire at?");
+         System.out.println(currentPlayer.name()+", where would you like to fire?");
+         System.out.println("Indicate a row letter and column number separated by a space.");
+         String input1 = scan.next();
+         String input2 = scan.next();
          
+         try
+         {
+            col = Integer.parseInt(input1);
+            row = input2.charAt(0);
+         }
+         catch(Exception e)
+         {
+            col = Integer.parseInt(input2);
+            row = input1.charAt(0);
+         }
+         
+         row = Character.toUpperCase(row);
+         validFireLocation = currentPlayer.isValidFire(col,row);
+         if(!validFireLocation)
+         {
+            System.out.println("That is not a valid shot, try again.");
+         }
+            
+         /*
+         System.out.println(currentPlayer.name()+" in which column (1-10) of the opponent's board would you like to fire at?");
          do{
             try{
                String colString = scan.next();
                col = Integer.parseInt(colString);
                }
-            catch(InputMismatchException ime)
+            catch(Exception e)
                {
                   System.out.println("Please enter an integer in the range 1-10.");
                }
@@ -203,6 +226,7 @@ public class GameController
          
          if(!validFireLocation)
             System.out.println("You have already fired this location. Enter another location.");
+         */
       }
       
       //specify which player object is the opponent
@@ -233,7 +257,7 @@ public class GameController
       else
       {
          currentPlayer = player1;
-      }   
+      }  
    }
    
    

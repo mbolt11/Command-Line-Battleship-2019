@@ -43,12 +43,18 @@ public class Player
    
    public boolean isValidFire(int col, char row_in)
    {
-      int row = (row_in - 'A') + 1;
+      //int row = (row_in - 'A') + 1;
+      int row = row_in - 64;
       
       /*System.out.println("Checking location "+row+" "+col);
       System.out.println("Opponent Board at location is "+opponentBoard[row][col]);
       System.out.println("isValidFire method returns "+ opponentBoard[row][col].equals("-"));*/
-      if(opponentBoard[row][col].equals("-"))
+      
+      if(col < 1 || col > 10)
+         return false;
+      else if(row < 1 || row > 10)
+         return false;
+      else if(opponentBoard[row][col].equals("-"))
          return true;
       else
          return false;
