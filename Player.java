@@ -7,6 +7,7 @@ public class Player
    private String [][] myBoard, opponentBoard;
    private ArrayList<Ship> myShips;
    private int playerNumber;
+   private String message = "";
    
    public Player(int playerNum_in)
    {
@@ -41,14 +42,19 @@ public class Player
       return myShips;
    }
    
+   public String getMessage()
+   {
+      return message;
+   }
+   
+   public void setMessage(String message_in)
+   {
+      message = message_in;
+   }
+   
    public boolean isValidFire(int col, char row_in)
    {
-      //int row = (row_in - 'A') + 1;
       int row = row_in - 64;
-      
-      /*System.out.println("Checking location "+row+" "+col);
-      System.out.println("Opponent Board at location is "+opponentBoard[row][col]);
-      System.out.println("isValidFire method returns "+ opponentBoard[row][col].equals("-"));*/
       
       if(col < 1 || col > 10)
          return false;
@@ -62,11 +68,19 @@ public class Player
    
    public void opponentBoardFiredAt(int col, char row_in, Player opponent)
    {
+      opponent.setMessage("Your opponent shot at "+row_in+" "+col+" and ");
       int row = (row_in - 'A') + 1;
       char fireResult = '*';
       
       if(opponent.shipHit(col, row))
+      {
          fireResult = 'H';
+         opponent.setMessage(opponent.getMessage()+"hit your ship!");
+      }
+      else
+      {
+         opponent.setMessage(opponent.getMessage()+"missed.");
+      }
          
       opponentBoard[row][col] = Character.toString(fireResult); 
    }
@@ -128,6 +142,7 @@ public class Player
             return success;
       }
       
+      System.out.println("Miss!");
       return success;
    }
    

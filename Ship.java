@@ -71,16 +71,11 @@ public class Ship
       {
          if(shipLocations[i][0] == row && shipLocations[i][1] == col)
          {
-            System.out.println("Ship ID: "+length+" hit");
+            System.out.println("Hit!");
             hit();
             return true;
          }
-         else
-         {
-            /*System.out.println("Ship ID: "+length+" at "+shipLocations[i][0]+" "+shipLocations[i][1]+" does not equal "+row+" "+column);*/
-         }
       }
-      
       return false;
    }
    
@@ -90,7 +85,7 @@ public class Ship
       if(life == 0)
       {
          sunk = true;
-         System.out.println("Ship ID: "+length+" sunk");
+         System.out.println("Sunk opponent's ship of length "+length);
       }
    }
    

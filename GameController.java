@@ -162,25 +162,56 @@ public class GameController
    {
       //get a row and column from the user
       boolean validFireLocation = false;
+      boolean validInputs = false;
       int col = -1;
       char row = ' ';
       
+      //Loop makes sure the input in a valid position on the board
       while(validFireLocation == false)
       {
-         System.out.println(currentPlayer.name()+", where would you like to fire?");
-         System.out.println("Indicate a row letter and column number separated by a space.");
-         String input1 = scan.next();
-         String input2 = scan.next();
-         
-         try
+         //Loop makes sure the correct data types are entered
+         validInputs = false;
+         while(!validInputs)
          {
-            col = Integer.parseInt(input1);
-            row = input2.charAt(0);
-         }
-         catch(Exception e)
-         {
-            col = Integer.parseInt(input2);
-            row = input1.charAt(0);
+            System.out.println(currentPlayer.name()+", where would you like to fire?");
+            System.out.println("Indicate a row letter and column number separated by a space.");
+            
+            //If the first input is an integer
+            if(scan.hasNextInt())
+            {
+               col = scan.nextInt();
+               
+               //Second input must be a character
+               if(scan.hasNextInt())
+               {
+                  String clear = scan.next();
+                  System.out.println("You need to enter a letter and a number. Try again.");
+               }
+               else
+               {
+                  String rowstring = scan.next();
+                  row = rowstring.charAt(0);
+                  validInputs = true;
+               }
+            }
+            //If the first input is a character
+            else
+            {
+               String rowstring = scan.next();
+               row = rowstring.charAt(0);
+               
+               //Second input must be an integer
+               if(scan.hasNextInt())
+               {
+                  col = scan.nextInt();
+                  validInputs = true;
+               }
+               else
+               {
+                  String clear = scan.next();
+                  System.out.println("You need to enter a letter and a number. Try again.");
+               }
+            }
          }
          
          row = Character.toUpperCase(row);
@@ -189,44 +220,6 @@ public class GameController
          {
             System.out.println("That is not a valid shot, try again.");
          }
-            
-         /*
-         System.out.println(currentPlayer.name()+" in which column (1-10) of the opponent's board would you like to fire at?");
-         do{
-            try{
-               String colString = scan.next();
-               col = Integer.parseInt(colString);
-               }
-            catch(Exception e)
-               {
-                  System.out.println("Please enter an integer in the range 1-10.");
-               }
-         }while(col < 1 || col > 10);
-         
-         System.out.println(currentPlayer.name()+" in which row (A-J) of the opponent's board would you like to fire at?");
-         int rowInt = -1;
-         
-         do{
-            try{
-               row = scan.next().charAt(0); 
-               row = Character.toUpperCase(row);
-               rowInt = row - 64;
-               }
-            catch(InputMismatchException ime)
-               {
-               }
-               
-            if(rowInt < 1 || rowInt > 10)
-               System.out.println("Please enter an charcater in the range A-J.");
-         }while(rowInt < 1 || rowInt > 10);
-         
-         //check if the opponent's board at that location has not already been fired at
-         //must remember to move the row and column in and down by 1 so that the correct string value is looked at
-         validFireLocation = currentPlayer.isValidFire(col, row); 
-         
-         if(!validFireLocation)
-            System.out.println("You have already fired this location. Enter another location.");
-         */
       }
       
       //specify which player object is the opponent
@@ -304,17 +297,26 @@ public class GameController
    public void printBoards(boolean printCurrentPlayerBoard)
    {   
       Player trackCurrentPlayer = currentPlayer;
+      Player currentOpponent;
       
       if(!printCurrentPlayerBoard)
       {
          if(currentPlayer.getNum() == 1)
          {
             currentPlayer = player2;
+            currentOpponent = player1;
          }
          else
          {
             currentPlayer = player1;
+            currentOpponent = player2;
          } 
+      }
+      
+      //Print the message above boards
+      if(printCurrentPlayerBoard)
+      {
+         System.out.println(currentOpponent.getMessage());
       }
         
       //Print the boards
