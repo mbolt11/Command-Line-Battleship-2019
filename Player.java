@@ -68,18 +68,12 @@ public class Player
    
    public void opponentBoardFiredAt(int col, char row_in, Player opponent)
    {
-      opponent.setMessage("Your opponent shot at "+row_in+" "+col+" and ");
       int row = (row_in - 'A') + 1;
       char fireResult = '*';
       
       if(opponent.shipHit(col, row))
       {
          fireResult = 'H';
-         opponent.setMessage(opponent.getMessage()+"hit your ship!");
-      }
-      else
-      {
-         opponent.setMessage(opponent.getMessage()+"missed.");
       }
          
       opponentBoard[row][col] = Character.toString(fireResult); 
@@ -134,14 +128,26 @@ public class Player
    public boolean shipHit(int col, int row)
    {
       boolean success = false;
+      char rowChar = (char)(row+64);
       
       for(int i = 0; i < myShips.size(); i++)
       {
          success = myShips.get(i).isHit(col, row);
          if(success)
+         {
+            if(myShips.get(i).isSunk())
+            {
+               message = "Your opponent shot at "+rowChar+" "+col+" and sunk your ship!";
+            }
+            else
+            {
+               message = "Your opponent shot at "+rowChar+" "+col+" and hit your ship!";
+            }
             return success;
+         }
       }
       
+      message = "Your opponent shot at "+rowChar+" "+col+" and missed.";
       System.out.println("Miss!");
       return success;
    }

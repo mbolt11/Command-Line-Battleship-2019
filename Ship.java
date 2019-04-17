@@ -86,6 +86,7 @@ public class Ship
       {
          sunk = true;
          System.out.println("Sunk opponent's ship of length "+length);
+         
       }
    }
    

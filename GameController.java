@@ -96,33 +96,38 @@ public class GameController
          while(!success)
          {
             //Get column
-            System.out.println("In which column (1-10) would you like your " + shipnames[i] + " ship?");
-            
             int col = -1;
-            
-            do{
-               try{
+            System.out.println("In which column (1-10) would you like your " + shipnames[i] + " ship?");
+            while(col < 1 || col > 10)
+            {               
+               try
+               {
                   String colString = scan.next();
                   col = Integer.parseInt(colString);
-                  }
+               }
                catch(Exception e)
-                  {
-                     System.out.println("Please enter an integer in the range 1-10.");
-                  }
-            }while(col < 1 || col > 10);
+               {
+                  System.out.println("Column must be an integer.");
+               }
+               
+               if(col < 1 || col > 10)
+                  System.out.print("Invalid column, try again: ");
+            }
             
             //Get row
             System.out.println("In which row (A-J) would you like your " + shipnames[i] + " ship?");
-            char rowletter = scan.next().charAt(0);
-            rowletter = Character.toUpperCase(rowletter);
-            int row = rowletter - 64;
-            
+            int row = -1;
             while(row < 1 || row > 10)
             {
-               System.out.print("Invalid row, try again: ");
-               rowletter = scan.next().charAt(0);
+               String rowstring = scan.next();
+               if(rowstring.length() > 1)
+                  System.out.println("Using the first character of your input.");
+               char rowletter = rowstring.charAt(0);
                rowletter = Character.toUpperCase(rowletter);
                row = rowletter - 64;
+            
+               if(row < 1 || row > 10)
+                  System.out.print("Invalid row, try again: ");
             }
             
             //Get direction
@@ -130,9 +135,11 @@ public class GameController
             char dir = ' ';
             while(dir != 'H' && dir !='V')
             {
-               dir = scan.next().charAt(0);
+               String dirstring = scan.next();
+               if(dirstring.length() > 1)
+                  System.out.println("Using the first character of your input.");
+               dir = dirstring.charAt(0);
                dir = Character.toUpperCase(dir);
-               System.out.println("check: "+dir);
                
                if(dir != 'H' && dir !='V')
                   System.out.println("Invlaid direction. Try again.");
@@ -297,26 +304,23 @@ public class GameController
    public void printBoards(boolean printCurrentPlayerBoard)
    {   
       Player trackCurrentPlayer = currentPlayer;
-      Player currentOpponent;
       
+      //Temporarily switching current player for 2nd print
       if(!printCurrentPlayerBoard)
       {
          if(currentPlayer.getNum() == 1)
          {
             currentPlayer = player2;
-            currentOpponent = player1;
          }
          else
          {
             currentPlayer = player1;
-            currentOpponent = player2;
          } 
       }
-      
-      //Print the message above boards
-      if(printCurrentPlayerBoard)
+      //Print the message above boards for first print
+      else
       {
-         System.out.println(currentOpponent.getMessage());
+         System.out.println(currentPlayer.getMessage());
       }
         
       //Print the boards
